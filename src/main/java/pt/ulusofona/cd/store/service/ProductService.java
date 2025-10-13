@@ -3,7 +3,7 @@ package pt.ulusofona.cd.store.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulusofona.cd.store.client.SupplierClient;
+import pt.ulusofona.cd.store.client.OrderClient;
 import pt.ulusofona.cd.store.dto.ProductRequest;
 import pt.ulusofona.cd.store.dto.SupplierDto;
 import pt.ulusofona.cd.store.exception.ProductNotFoundException;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final SupplierClient supplierClient;
+    private final OrderClient supplierClient;
 
     @Transactional
     public Product createProduct(ProductRequest request) {

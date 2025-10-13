@@ -1,0 +1,12 @@
+pt\ulusofona\cd\store\exception\ProductNotFoundException.class
+pt\ulusofona\cd\store\dto\SupplierDto.class
+pt\ulusofona\cd\store\ProductServiceApplication.class
+pt\ulusofona\cd\store\client\SupplierClient.class
+pt\ulusofona\cd\store\model\Product.class
+pt\ulusofona\cd\store\service\ProductService.class
+pt\ulusofona\cd\store\controller\ProductController.class
+pt\ulusofona\cd\store\dto\ProductResponse.class
+pt\ulusofona\cd\store\exception\GlobalExceptionHandler.class
+pt\ulusofona\cd\store\repository\ProductRepository.class
+pt\ulusofona\cd\store\dto\ProductRequest.class
+pt\ulusofona\cd\store\mapper\ProductMapper.class
