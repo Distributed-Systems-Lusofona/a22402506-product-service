@@ -58,4 +58,22 @@ public class ProductController {
         service.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/removeStock/{quantity}")
+    public ResponseEntity<Boolean> removeStock(@PathVariable UUID id, @PathVariable int quantity) {
+        boolean result = service.removeStock(id, quantity);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}/addStock/{quantity}")
+    public ResponseEntity<Boolean> addStock(@PathVariable UUID id, @PathVariable int quantity) {
+        boolean result = service.addStock(id, quantity);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}/discontinue")
+    public ResponseEntity<ProductResponse> discontinueProduct(@PathVariable UUID id) {
+        Product discontinued = service.setDiscontinued(id);
+        return ResponseEntity.ok(ProductMapper.toResponse(discontinued));
+    }
 }

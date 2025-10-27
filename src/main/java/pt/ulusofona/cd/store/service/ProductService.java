@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulusofona.cd.store.client.OrderClient;
+import pt.ulusofona.cd.store.client.SupplierClient;
 import pt.ulusofona.cd.store.dto.ProductRequest;
 import pt.ulusofona.cd.store.dto.SupplierDto;
 import pt.ulusofona.cd.store.exception.ProductNotFoundException;
@@ -20,6 +21,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final OrderClient supplierClient;
+    private final OrderClient orderClient;
 
     @Transactional
     public Product createProduct(ProductRequest request) {
@@ -69,5 +71,59 @@ public class ProductService {
     public void deleteProduct(UUID id) {
         Product product = getProductById(id);
         productRepository.delete(product);
+    }
+
+    @Transactional
+    public boolean removeStock(UUID id, int quantity) {
+        Product product = getProductById(id);
+
+        if(product.isDiscontinued() || product.getStock() < quantity) {
+            return false;
+        }
+        product.setStock(product.getStock() - quantity);
+        productRepository.save(product);
+        return true;
+    }
+
+    @Transactional
+    public boolean addStock(UUID id, int quantity) {
+        Product product = getProductById(id);
+        if (product.isDiscontinued()) {
+            return false;
+        }
+        product.setStock(product.getStock() + quantity);
+        productRepository.save(product);
+        return true;
+    }
+
+    @Transactional
+    public Product setDiscontinued(UUID id) {
+        Product product = getProductById(id);
+
+        if (product.isDiscontinued()) {
+            throw new IllegalStateException("Product is already discontinued: " + id);
+        }
+
+        boolean hasPendingOrders = orderClient.hasPendingOrdersForProduct(id);
+        if (hasPendingOrders) {
+            throw new IllegalStateException("Cannot discontinue product with pending orders: " + id);
+        }
+
+        product.setDiscontinued(true);
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product setProductsInactiveBySupplier(UUID id) {
+        Product product = getProductById(id);
+        if (product.isDiscontinued()) {
+            throw new IllegalStateException("Product is already discontinued: " + id);
+        }
+        boolean hasPendingOrders = orderClient.hasPendingOrdersForProduct(id);
+        if (hasPendingOrders) {
+            throw new IllegalStateException("Cannot discontinue product with pending orders: " + id);
+        }
+        product.setDiscontinued(false);
+        return productRepository.save(product);
     }
 }

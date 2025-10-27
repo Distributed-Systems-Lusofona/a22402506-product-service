@@ -65,4 +65,15 @@ public class Product {
     protected void onUpdate() {
         updatedAt = Instant.now();
     }
+
+    public boolean isDiscontinued() {
+        return stock == 0;
+    }
+
+    public  boolean setDiscontinued(boolean discontinued) {
+        if (discontinued) {
+            this.stock = 0;
+        }
+        return discontinued;
+    }
 }
