@@ -1,6 +1,7 @@
 package pt.ulusofona.cd.store.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulusofona.cd.store.client.OrderClient;
@@ -125,5 +126,19 @@ public class ProductService {
         }
         product.setDiscontinued(false);
         return productRepository.save(product);
+    }
+
+
+    public int setProductsInactiveBySupplierId(String supplierId) {
+        Product product = getProductById(UUID.fromString(supplierId));
+        if (product.isDiscontinued()) {
+            throw new IllegalStateException("Product is already discontinued: " + supplierId);
+        }
+        boolean hasPendingOrders = orderClient.hasPendingOrdersForProduct(UUID.fromString(supplierId));
+        if (hasPendingOrders) {
+            throw new IllegalStateException("Cannot discontinue product with pending orders: " + supplierId);
+        }
+        product.setDiscontinued(false);
+        return productRepository.save(product).getStock();
     }
 }

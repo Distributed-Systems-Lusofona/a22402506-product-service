@@ -3,6 +3,8 @@ package pt.ulusofona.cd.store.event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import pt.ulusofona.cd.store.dto.OrderCancelledEvent;
+import pt.ulusofona.cd.store.dto.OrderConfirmedEvent;
 import pt.ulusofona.cd.store.dto.SupplierDeactivatedEvent;
 import pt.ulusofona.cd.store.service.ProductService;
 
@@ -20,4 +22,16 @@ public class SupplierEventConsumer {
         int updatedCount = productService.setProductsInactiveBySupplierId(supplierId);
         System.out.println("Successfully set " + updatedCount + " products to inactive for supplier " + supplierId);
     }
-}
+
+    @KafkaListener(topics = "orders.confirmed.v1", groupId = "product-service")
+    public void handleOrderConfirmedEvent(OrderConfirmedEvent event) {
+        System.out.println("ProductService recebeu OrderConfirmedEvent: " + event);
+    }
+
+    @KafkaListener(topics = "orders.cancelled.v1", groupId = "product-service")
+    public void handleOrderCancelledEvent(OrderCancelledEvent event) {
+        System.out.println("ProductService recebeu OrderCancelledEvent: " + event);
+
+    }
+
+    }
